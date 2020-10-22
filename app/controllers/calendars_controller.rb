@@ -2,26 +2,23 @@ class CalendarsController < ApplicationController
 
   # １週間のカレンダーと予定が表示されるページ
   def index
-    get_week
-  end
-
-  def new
+    getWeek
     @plan = Plan.new
   end
 
   # 予定の保存
-  def create #(モデルの生成と保存を同時に行うメソッド)
+  def create
     Plan.create(plan_params)
-    redirect_to action: :index　#️（転送）
+    redirect_to action: :index
   end
 
-  private　# private以下の記述はすべてプライベートメソッドになる
+  private
 
   def plan_params
-    params.require(:calendars).permit(:date, :plan) # calendarsキーを指定、指定したパラメーターだけの取得を約束する
+    params.require(:calendars).permit(:date, :plan)
   end
 
-  def get_week
+  def getWeek
     wdays = ['(日)','(月)','(火)','(水)','(木)','(金)','(土)']
 
     # Dateオブジェクトは、日付を保持しています。下記のように`.today.day`とすると、今日の日付を取得できます。
@@ -34,10 +31,10 @@ class CalendarsController < ApplicationController
 
     7.times do |x|
       today_plans = []
-      plan.plans.map do |plan|
+      plan = plans.map do |plan|
         today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
-      days = { month: (@todays_date + x).month, date: (@todays_date+x).day, plans: today_plans}
+      days = { :month => (@todays_date + x).month, :date => (@todays_date+x).day, :plans => today_plans}
       @week_days.push(days)
     end
 
